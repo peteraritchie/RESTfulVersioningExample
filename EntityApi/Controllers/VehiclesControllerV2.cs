@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Domain.Abstractions;
+using Domain.Primitives;
 using EntityApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,8 @@ namespace EntityApi.Controllers
 		[HttpGet]
 		public override ActionResult<IEnumerable<VehicleInfo>> Get()
 		{
-			return new OkObjectResult(repository.Vehicles.Select(v => new VehicleInfo(v)));
+			return new OkObjectResult(repository.Vehicles.Append(new Vehicle {VehicleIdentifier = "version 2"})
+				.Select(v => new VehicleInfo(v)));
 		}
 	}
 }

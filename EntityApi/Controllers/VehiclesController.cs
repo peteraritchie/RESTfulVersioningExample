@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Domain.Abstractions;
-using EntityApi.Models;
+﻿using Domain.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EntityApi.Controllers
