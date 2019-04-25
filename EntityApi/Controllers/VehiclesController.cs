@@ -8,7 +8,7 @@ namespace EntityApi.Controllers
 	[Route("api/[controller]")]
 	[ApiController]
 	[ApiVersion("1.0")]
-	[Produces("application/vnd.null.entity+json; v=1.0")]
+	//[Produces("application/vnd.null.entity+json; v=1.0", "application/vnd.null.entity+xml; v=1.0")]
 	public class VehiclesController : VehiclesControllerBase
 	{
 		public VehiclesController(IVehicleRepositorical repository) : base(repository)

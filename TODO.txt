@@ -1,0 +1,3 @@
+# TODO
+# more detail on the headers in response
+# think about an envelope or a _links property in response

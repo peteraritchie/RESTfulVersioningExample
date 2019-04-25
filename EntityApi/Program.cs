@@ -6,6 +6,16 @@ namespace EntityApi
 {
 	public class Program
 	{
+#if false
+		public static void Main(string[] args)
+		{
+			CreateWebHostBuilder(args).Build().Run();
+		}
+
+		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+			WebHost.CreateDefaultBuilder(args)
+				.UseStartup<Startup>();
+#else
 		[ExcludeFromCodeCoverage( /* specific run-time requirement */)]
 		public static void Main(string[] args)
 		{
@@ -32,5 +42,6 @@ namespace EntityApi
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
 			WebHost.CreateDefaultBuilder(args)
 				.UseStartup<Startup>();
+#endif
 	}
 }

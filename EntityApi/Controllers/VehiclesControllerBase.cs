@@ -10,7 +10,7 @@ namespace EntityApi.Controllers
 	public abstract class VehiclesControllerBase : ControllerBase
 	{
 		protected IVehicleRepositorical repository;
-		protected const string GetByIdRouteName = "GetProduct";
+		public const string GetByIdRouteName = "GetProduct";
 
 		protected VehiclesControllerBase(IVehicleRepositorical repository)
 		{
@@ -22,11 +22,11 @@ namespace EntityApi.Controllers
 		public virtual ActionResult<IEnumerable<VehicleInfo>> Get()
 		{
 			// TODO: implement Get using repository
-			return Ok(repository.Vehicles.Select(v => new VehicleInfo(v)));
+			return Ok(repository.Vehicles.Select(v => new VehicleInfo(v)).ToArray());
 		}
 
 		/// GET api/vehicles/5
-		[HttpGet("{id}", Name = VehiclesController.GetByIdRouteName)]
+		[HttpGet("{id}", Name = GetByIdRouteName)]
 		public virtual ActionResult<VehicleInfo> Get(string id)
 		{
 			if (string.IsNullOrWhiteSpace(id))
@@ -45,7 +45,7 @@ namespace EntityApi.Controllers
 				return BadRequest(ErrorResponseInfo.BadRequestError(1, "missing product", nameof(vehicle)));
 			var vehicleId = repository.AddNewVehicle(vehicle.ToVehicle());
 			vehicle.VehicleIdentifier = vehicleId;
-			return CreatedAtRoute(VehiclesController.GetByIdRouteName,
+			return CreatedAtRoute(GetByIdRouteName,
 				new {id = vehicleId}, vehicle);
 		}
 
@@ -65,7 +65,7 @@ namespace EntityApi.Controllers
 				if (existing == null)
 				{
 					repository.AddNewVehicle(id, vehicle.ToVehicle());
-					return CreatedAtRoute(VehiclesController.GetByIdRouteName,
+					return CreatedAtRoute(GetByIdRouteName,
 						new {id}, vehicle);
 				}
 

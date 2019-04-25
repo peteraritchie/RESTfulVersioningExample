@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Domain.Primitives;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 
 namespace EntityApi
@@ -23,32 +24,38 @@ namespace EntityApi
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+			services.AddMvc(options =>
+			{
+				options.RespectBrowserAcceptHeader = true;
+				options.InputFormatters.Add(new XmlSerializerInputFormatter(options));
+				var xmlSerializerOutputFormatter = new XmlSerializerOutputFormatter();
+				xmlSerializerOutputFormatter.SupportedMediaTypes.Add("application/vnd.null.entity+xml");
+				xmlSerializerOutputFormatter.SupportedMediaTypes.Add("application/vnd.null.entity+xml; v=1.0");
+				xmlSerializerOutputFormatter.SupportedMediaTypes.Add("application/vnd.null.entity+xml; v=2.0");
+				options.OutputFormatters.Add(xmlSerializerOutputFormatter);
+			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-			services.AddTransient(c =>
-				new VehiclesController(new CollectionStubVehiclesRepository(new[]
-				{
-					new Vehicle {VehicleIdentifier = "1"},
-					new Vehicle {VehicleIdentifier = "2"}
-				})));
 			services.AddSingleton<IVehicleRepositorical>(
 				new CollectionStubVehiclesRepository(new[]
 				{
 					new Vehicle {VehicleIdentifier = "3"},
 					new Vehicle {VehicleIdentifier = "4"}
 				}));
-
+			var defaultVersion = new ApiVersion(1, 0);
 			services.AddApiVersioning(options =>
 			{
-				options.ApiVersionReader = new MediaTypeApiVersionReader("v");
+				options.ApiVersionReader = new MediaTypeApiVersionReader();
+				options.AssumeDefaultVersionWhenUnspecified = true;
 				options.ReportApiVersions = true;
 				options.AssumeDefaultVersionWhenUnspecified = true;
 				options.Conventions
-					.Controller<VehiclesController>()
-					.HasApiVersion(1, 0);
-				options.Conventions
 					.Controller<VehiclesControllerV2>()
 					.HasApiVersion(2, 0);
+				options.Conventions
+					.Controller<VehiclesController>()
+					.HasApiVersion(defaultVersion);
+
+				options.DefaultApiVersion = defaultVersion;
 				//options.AddConventionsFromAssembly();
 			});
 		}
